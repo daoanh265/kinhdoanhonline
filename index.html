@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Khảo sát: Giới và Kinh doanh trên nền tảng số</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --blue:#2563eb;
+    --blue-soft:#cfe0ff;
+    --cyan:#0891b2;
+    --cyan-soft:#cdeef5;
+    --grad:linear-gradient(135deg,#2563eb 0%,#06b6d4 100%);
+    --grad-soft:linear-gradient(135deg,#e0ecff 0%,#dff5fb 100%);
+    --ink:#16243b;
+    --ink-soft:#5b6b82;
+    --card:#ffffff;
+    --ok:#15a36e;
+    --err:#e2475c;
+    --radius:20px;
+    --shadow:0 10px 30px rgba(37,99,235,.12);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Be Vietnam Pro","Nunito",system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#e6f0ff 0%,#f0f9ff 45%,#ffffff 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    line-height:1.55;
+    font-size:16px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 60px;}
+
+  /* ---- Progress ---- */
+  .progress-wrap{
+    position:sticky;top:0;z-index:50;
+    padding:14px 16px 12px;
+    margin:-18px -16px 18px;
+    background:rgba(255,255,255,.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid #dbe7ff;
+  }
+  .progress-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;}
+  .progress-label{font-size:13.5px;font-weight:600;color:var(--ink-soft);}
+  .progress-pct{font-size:13.5px;font-weight:700;color:var(--blue);}
+  .bar{height:10px;border-radius:99px;background:#e4edff;overflow:hidden;}
+  .bar > i{
+    display:block;height:100%;width:0;border-radius:99px;
+    background:var(--grad);
+    transition:width .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ---- Steps ---- */
+  .step{display:none;animation:fade .45s ease;}
+  .step.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+  .card{
+    background:var(--card);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:24px 22px;margin-bottom:18px;
+    border:1px solid #e8f0ff;
+  }
+  .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+  .sec-icon{
+    flex:0 0 auto;width:52px;height:52px;border-radius:16px;
+    background:var(--grad-soft);display:grid;place-items:center;
+    box-shadow:inset 0 0 0 1px #d8e6ff;
+  }
+  .sec-icon svg{width:30px;height:30px;}
+  .sec-title{font-size:19px;font-weight:800;margin:0;color:var(--ink);}
+  .sec-desc{font-size:14px;color:var(--ink-soft);margin:2px 0 0;}
+
+  .q{margin:22px 0 0;padding-top:20px;border-top:1px dashed #dce7fa;}
+  .q:first-of-type{border-top:none;padding-top:6px;}
+  .q-label{font-weight:600;font-size:15.5px;margin-bottom:12px;display:block;}
+  .req{color:var(--err);font-weight:700;margin-left:2px;}
+  .hint{font-size:13px;color:var(--ink-soft);font-weight:400;margin-top:3px;display:block;}
+
+  /* ---- options ---- */
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;
+    padding:12px 14px;margin-bottom:9px;border-radius:14px;
+    background:#f6faff;border:1.5px solid #e3edfd;cursor:pointer;
+    transition:.18s;
+  }
+  .opt:hover{border-color:var(--blue-soft);background:#eef5ff;}
+  .opt input{margin-top:3px;accent-color:var(--blue);width:18px;height:18px;flex:0 0 auto;cursor:pointer;}
+  .opt input:checked ~ span{color:var(--ink);font-weight:600;}
+  .opt:has(input:checked){
+    border-color:var(--blue);background:linear-gradient(135deg,#e8f1ff,#e4f6fb);
+    box-shadow:0 4px 14px rgba(37,99,235,.14);
+  }
+  .opt span{font-size:15px;color:var(--ink-soft);}
+
+  /* ---- text/number inputs ---- */
+  input[type=text],input[type=number]{
+    width:100%;padding:13px 15px;border-radius:13px;
+    border:1.5px solid #d8e4fa;background:#f8fbff;font-family:inherit;
+    font-size:15.5px;color:var(--ink);transition:.18s;
+  }
+  input[type=text]:focus,input[type=number]:focus{
+    outline:none;border-color:var(--blue);background:#fff;
+    box-shadow:0 0 0 4px rgba(37,99,235,.12);
+  }
+  .inline-other{margin-top:10px;}
+  .num-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .num-grid label{font-size:13.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;}
+
+  /* ---- Likert ---- */
+  .likert{margin-top:6px;}
+  .likert-anchors{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);margin-bottom:8px;gap:8px;}
+  .likert-anchors b{color:var(--cyan);}
+  .likert-scale{display:flex;gap:8px;}
+  .likert-scale label{
+    flex:1;text-align:center;padding:13px 4px;border-radius:13px;
+    border:1.5px solid #d8e4fa;background:#f8fbff;cursor:pointer;
+    font-weight:700;font-size:16px;color:var(--ink-soft);transition:.16s;
+    position:relative;
+  }
+  .likert-scale label:hover{border-color:var(--blue-soft);}
+  .likert-scale input{position:absolute;opacity:0;width:0;height:0;}
+  .likert-scale label:has(input:checked){
+    background:var(--grad);color:#fff;border-color:transparent;
+    transform:translateY(-2px);box-shadow:0 6px 16px rgba(37,99,235,.3);
+  }
+
+  /* ---- nav buttons ---- */
+  .nav{display:flex;gap:12px;margin-top:8px;}
+  .btn{
+    flex:1;padding:15px 18px;border-radius:15px;border:none;cursor:pointer;
+    font-family:inherit;font-weight:700;font-size:16px;transition:.18s;
+  }
+  .btn-next,.btn-submit{
+    background:var(--grad);color:#fff;
+    box-shadow:0 8px 22px rgba(37,99,235,.32);
+  }
+  .btn-next:hover,.btn-submit:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(37,99,235,.4);}
+  .btn-back{background:#fff;color:var(--blue);border:1.5px solid #d4e2fb;flex:0 0 auto;min-width:110px;}
+  .btn-back:hover{background:#eef5ff;}
+  .btn-submit{font-size:17px;}
+
+  /* ---- error ---- */
+  .err-box{
+    display:none;margin-top:14px;padding:12px 15px;border-radius:13px;
+    background:#fff0f4;border:1.5px solid #ffd0dc;color:#c0395a;
+    font-size:14px;font-weight:600;
+  }
+  .err-box.show{display:block;animation:shake .4s;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .q.invalid .q-label{color:var(--err);}
+  .q.invalid .opt,.q.invalid input[type=text],.q.invalid input[type=number]{border-color:#ffc2d1;}
+  .q.invalid .likert-scale label{border-color:#ffc2d1;}
+
+  /* ---- welcome / thanks ---- */
+  .hero{text-align:center;padding:34px 22px;}
+  .hero-badge{width:96px;height:96px;margin:0 auto 18px;border-radius:30px;background:var(--grad-soft);display:grid;place-items:center;box-shadow:var(--shadow);}
+  .hero-badge svg{width:58px;height:58px;}
+  .hero h1{font-size:26px;line-height:1.3;margin:0 0 14px;font-weight:800;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero p{color:var(--ink-soft);font-size:15.5px;max-width:520px;margin:0 auto 12px;}
+  .info-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:22px 0 28px;}
+  .pill{display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #e1ebff;
+    padding:9px 15px;border-radius:99px;font-size:13.5px;font-weight:600;color:var(--ink-soft);box-shadow:0 3px 10px rgba(37,99,235,.07);}
+  .pill svg{width:18px;height:18px;}
+  .btn-start{
+    display:inline-block;border:none;cursor:pointer;font-family:inherit;
+    background:var(--grad);color:#fff;font-weight:800;font-size:18px;
+    padding:17px 52px;border-radius:99px;box-shadow:0 10px 28px rgba(37,99,235,.36);transition:.18s;
+  }
+  .btn-start:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 16px 34px rgba(37,99,235,.45);}
+
+  .stop-msg{
+    display:none;margin-top:18px;padding:18px 20px;border-radius:16px;
+    background:linear-gradient(135deg,#eef4ff,#e6f6fb);border:1.5px solid #c7ddff;
+    color:#2e4a73;font-weight:600;text-align:center;font-size:15px;
+  }
+  .stop-msg.show{display:block;animation:fade .4s;}
+
+  .max-warn{font-size:13px;color:var(--err);font-weight:600;margin-top:6px;display:none;}
+  .max-warn.show{display:block;}
+
+  footer{text-align:center;font-size:12.5px;color:#9aacc6;margin-top:20px;}
+
+  @media(max-width:520px){
+    body{font-size:15.5px;}
+    .card{padding:20px 16px;}
+    .sec-title{font-size:17px;}
+    .hero h1{font-size:22px;}
+    .num-grid{grid-template-columns:1fr;}
+    /* Likert -> vertical cards on mobile */
+    .likert-scale{flex-direction:column;gap:8px;}
+    .likert-scale label{display:flex;align-items:center;gap:12px;text-align:left;padding:13px 16px;}
+    .likert-scale label::after{content:attr(data-text);font-size:13.5px;font-weight:500;color:var(--ink-soft);}
+    .likert-scale label:has(input:checked)::after{color:#fff;}
+    .btn-back{min-width:0;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap" style="display:none">
+    <div class="progress-top">
+      <span class="progress-label" id="progressLabel">Phần giới thiệu</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+  </div>
+
+  <form id="surveyForm" autocomplete="off" novalidate>
+
+  <!-- ============ STEP 0 — WELCOME ============ -->
+  <section class="step active" data-step="0">
+    <div class="card hero">
+      <div class="hero-badge">
+        <svg viewBox="0 0 64 64" fill="none">
+          <rect x="14" y="8" width="28" height="44" rx="5" fill="#3b82f6"/>
+          <rect x="18" y="13" width="20" height="28" rx="2" fill="#fff"/>
+          <path d="M22 35l4-6 4 3 6-9" stroke="#22d3ee" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M37 20v3h-3" stroke="#22d3ee" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="28" cy="46" r="2" fill="#fff"/>
+          <circle cx="48" cy="44" r="9" fill="#38bdf8"/>
+          <path d="M48 40v8M44 44h8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1>KHẢO SÁT: GIỚI VÀ<br/>KINH DOANH TRÊN NỀN TẢNG SỐ</h1>
+      <p>Chào Anh/chị! Cảm ơn Anh/chị đã dành thời gian tham gia khảo sát. Những chia sẻ của Anh/chị sẽ giúp chúng tôi hiểu rõ hơn về hành trình kinh doanh số tại Việt Nam.</p>
+      <div class="info-pills">
+        <span class="pill">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#2563eb" stroke-width="2"/><path d="M12 7v5l3 2" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/></svg>
+          ~10–12 phút
+        </span>
+        <span class="pill">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" stroke="#0891b2" stroke-width="2" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Bảo mật thông tin
+        </span>
+        <span class="pill">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9l8-5 8 5v10" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/><path d="M9 19v-6h6v6" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/></svg>
+          Chỉ dùng cho nghiên cứu
+        </span>
+      </div>
+      <button type="button" class="btn-start" id="startBtn">Bắt đầu ✨</button>
+    </div>
+    <footer>Mọi thông tin được bảo mật và chỉ dùng cho mục đích nghiên cứu khoa học.</footer>
+  </section>
+
+  <!-- ============ STEP 1 ============ -->
+  <section class="step" data-step="1">
+
+    <!-- PHẦN 0 -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#0891b2" stroke-width="2"/><path d="M16 16l5 5" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần 0 · Sàng lọc đối tượng</h2>
+          <p class="sec-desc">Vài câu hỏi nhỏ để bắt đầu nhé!</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="S1">
+        <label class="q-label">0.1. Trong 12 tháng qua, Anh/chị có hoạt động kinh doanh hoặc làm việc tạo thu nhập qua nền tảng số (Shopee, TikTok Shop, Facebook, Zalo, Grab, ShopeeFood, Upwork, livestream…) không?<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="S1" value="1"><span>Có</span></label>
+        <label class="opt"><input type="radio" name="S1" value="0"><span>Không</span></label>
+        <div class="stop-msg" id="stopMsg">Cảm ơn Anh/chị. Khảo sát này dành cho người có hoạt động kinh doanh số. 🙏</div>
+      </div>
+
+      <div class="q" data-required="S2_group">
+        <label class="q-label">0.2. Hoạt động số của Anh/chị gồm những loại nào? <span class="hint">(có thể chọn nhiều phương án)</span></label>
+        <label class="opt"><input type="checkbox" name="S2_1" value="1"><span>Bán hàng trên sàn TMĐT (Shopee, Lazada, TikTok Shop)</span></label>
+        <label class="opt"><input type="checkbox" name="S2_2" value="1"><span>Bán hàng qua mạng xã hội (Facebook, Zalo, Instagram, kênh cá nhân)</span></label>
+        <label class="opt"><input type="checkbox" name="S2_3" value="1"><span>Livestream bán hàng</span></label>
+        <label class="opt"><input type="checkbox" name="S2_4" value="1"><span>Tài xế xe công nghệ (Grab, Be, Xanh SM, Gojek)</span></label>
+        <label class="opt"><input type="checkbox" name="S2_5" value="1"><span>Giao hàng / giao đồ ăn (ShopeeFood, GrabFood, BaeMin)</span></label>
+        <label class="opt"><input type="checkbox" name="S2_6" value="1"><span>Freelancer / làm việc tự do online (thiết kế, viết, dịch, IT, dạy học…)</span></label>
+        <label class="opt"><input type="checkbox" name="S2_7" value="1"><span>Sáng tạo nội dung số có thu nhập (TikTok creator, YouTuber, blogger)</span></label>
+        <label class="opt"><input type="checkbox" name="S2_8" value="1" data-other="S2_other"><span>Khác</span></label>
+        <input type="text" class="inline-other" name="S2_other" placeholder="Ghi rõ…" style="display:none">
+      </div>
+
+      <div class="q" data-required="S3">
+        <label class="q-label">0.3. Trung bình mỗi ngày Anh/chị dành bao nhiêu thời gian cho hoạt động số này?<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="S3" value="1"><span>Toàn thời gian (trên 8 giờ/ngày)</span></label>
+        <label class="opt"><input type="radio" name="S3" value="2"><span>Bán thời gian (4–8 giờ/ngày)</span></label>
+        <label class="opt"><input type="radio" name="S3" value="3"><span>Làm thêm (dưới 4 giờ/ngày)</span></label>
+      </div>
+
+      <div class="q" data-required="S4">
+        <label class="q-label">0.4. Anh/chị thường làm hoạt động này ở đâu nhiều nhất? <span class="hint">(chọn 1)</span><span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="S4" value="1"><span>Tại nhà</span></label>
+        <label class="opt"><input type="radio" name="S4" value="2"><span>Bất kỳ nơi đâu có kết nối Internet</span></label>
+        <label class="opt"><input type="radio" name="S4" value="3"><span>Tại văn phòng</span></label>
+        <label class="opt"><input type="radio" name="S4" value="4"><span>Tại cửa hàng / kho bãi</span></label>
+        <label class="opt"><input type="radio" name="S4" value="5"><span>Chủ yếu di chuyển / ngoài đường (tài xế, giao hàng)</span></label>
+      </div>
+
+      <div class="q" data-required="N_GENDER">
+        <label class="q-label">0.5. Giới tính<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="N_GENDER" value="1"><span>Nam</span></label>
+        <label class="opt"><input type="radio" name="N_GENDER" value="2"><span>Nữ</span></label>
+        <label class="opt"><input type="radio" name="N_GENDER" value="3"><span>Khác</span></label>
+      </div>
+    </div>
+
+    <!-- PHẦN A -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#2563eb" stroke-width="2"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6" stroke="#0891b2" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần A · Thông tin cá nhân</h2>
+          <p class="sec-desc">Đôi nét về Anh/chị để chúng tôi hiểu hơn nhé.</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="A1">
+        <label class="q-label">A1. Năm sinh<span class="req">*</span></label>
+        <input type="number" name="A1" min="1950" max="2008" placeholder="VD: 1990">
+      </div>
+
+      <div class="q" data-required="A2">
+        <label class="q-label">A2. Tình trạng hôn nhân<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="A2" value="1"><span>Độc thân</span></label>
+        <label class="opt"><input type="radio" name="A2" value="2"><span>Có gia đình</span></label>
+        <label class="opt"><input type="radio" name="A2" value="3"><span>Ly hôn / ly thân</span></label>
+        <label class="opt"><input type="radio" name="A2" value="4"><span>Goá</span></label>
+      </div>
+
+      <div class="q" data-required="A3">
+        <label class="q-label">A3. Trình độ học vấn cao nhất<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="A3" value="1"><span>THCS trở xuống</span></label>
+        <label class="opt"><input type="radio" name="A3" value="2"><span>THPT</span></label>
+        <label class="opt"><input type="radio" name="A3" value="3"><span>Trung cấp / Cao đẳng</span></label>
+        <label class="opt"><input type="radio" name="A3" value="4"><span>Đại học</span></label>
+        <label class="opt"><input type="radio" name="A3" value="5"><span>Sau đại học</span></label>
+      </div>
+
+      <div class="q" data-required="A4">
+        <label class="q-label">A4. Khu vực sinh sống<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="A4" value="1"><span>Thành thị (nội thành, thị trấn)</span></label>
+        <label class="opt"><input type="radio" name="A4" value="2"><span>Nông thôn</span></label>
+      </div>
+
+      <div class="q" data-required="A5">
+        <label class="q-label">A5. Anh/chị đã làm hoạt động số này được bao lâu?<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="A5" value="1"><span>Dưới 6 tháng</span></label>
+        <label class="opt"><input type="radio" name="A5" value="2"><span>6–12 tháng</span></label>
+        <label class="opt"><input type="radio" name="A5" value="3"><span>1–2 năm</span></label>
+        <label class="opt"><input type="radio" name="A5" value="4"><span>2–5 năm</span></label>
+        <label class="opt"><input type="radio" name="A5" value="5"><span>Trên 5 năm</span></label>
+      </div>
+
+      <div class="q" data-required="A6">
+        <label class="q-label">A6. So với công việc truyền thống (việc làm công ăn lương) mà Anh/chị có thể tiếp cận, thu nhập từ công việc số hiện tại của Anh/chị:<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="A6" value="1"><span>Thấp hơn trên 50%</span></label>
+        <label class="opt"><input type="radio" name="A6" value="2"><span>Thấp hơn 10–50%</span></label>
+        <label class="opt"><input type="radio" name="A6" value="3"><span>Tương đương (chênh lệch dưới ±10%)</span></label>
+        <label class="opt"><input type="radio" name="A6" value="4"><span>Cao hơn 10–50%</span></label>
+        <label class="opt"><input type="radio" name="A6" value="5"><span>Cao hơn trên 50%</span></label>
+      </div>
+
+      <div class="q" data-required="A7" data-likert="A7"
+           data-low="Rất yếu" data-high="Thành thạo"
+           data-qtext="A7. Tự đánh giá kỹ năng sử dụng công nghệ số của Anh/chị:"></div>
+    </div>
+
+    <!-- PHẦN B -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="3" stroke="#2563eb" stroke-width="2"/><circle cx="16" cy="9" r="2.5" stroke="#0891b2" stroke-width="2"/><path d="M3 19c0-3 2.5-5 5-5s5 2 5 5" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/><path d="M14 19c0-2.5 1.5-4 3.5-4S21 16.5 21 19" stroke="#0891b2" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần B · Hộ gia đình</h2>
+          <p class="sec-desc">Một chút về gia đình của Anh/chị.</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="B1">
+        <label class="q-label">B1. Tổng số người trong hộ gia đình (gồm Anh/chị)<span class="req">*</span></label>
+        <input type="number" name="B1" min="1" placeholder="Số người">
+      </div>
+
+      <div class="q">
+        <label class="q-label">B2. Anh/chị có con không? Nếu có, ghi số con theo nhóm tuổi:</label>
+        <div class="num-grid">
+          <div><label>Con dưới 6 tuổi</label><input type="number" name="B2_under6" min="0" placeholder="0"></div>
+          <div><label>Con 6 – 11 tuổi</label><input type="number" name="B2_6to11" min="0" placeholder="0"></div>
+          <div><label>Con 12 – 17 tuổi</label><input type="number" name="B2_12to17" min="0" placeholder="0"></div>
+          <div><label>Con từ 18 tuổi trở lên</label><input type="number" name="B2_18plus" min="0" placeholder="0"></div>
+        </div>
+        <label class="opt" style="margin-top:12px"><input type="checkbox" name="B2_none" value="1" id="B2_none"><span>Không có con</span></label>
+      </div>
+
+      <div class="q" data-required="B3">
+        <label class="q-label">B3. Vai trò thu nhập của Anh/chị trong gia đình<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="B3" value="1"><span>Là nguồn thu nhập chính / duy nhất</span></label>
+        <label class="opt"><input type="radio" name="B3" value="2"><span>Đóng góp ngang với thành viên khác</span></label>
+        <label class="opt"><input type="radio" name="B3" value="3"><span>Là khoản phụ thêm</span></label>
+        <label class="opt"><input type="radio" name="B3" value="4"><span>Tôi sống một mình</span></label>
+      </div>
+
+      <div class="q">
+        <label class="q-label">B4. Trong gia đình, ai là người chủ yếu đảm nhận các công việc sau? <span class="hint">(1 = Tôi hoàn toàn → 5 = Người khác hoàn toàn; 3 = chia đều)</span></label>
+      </div>
+      <div class="q" data-required="N_HOUSEWORK_1" data-likert="N_HOUSEWORK_1" data-low="Tôi hoàn toàn" data-high="Người khác hoàn toàn"
+           data-qtext="B4.1. Nấu ăn, dọn dẹp, giặt giũ"></div>
+      <div class="q" data-required="N_HOUSEWORK_2" data-likert="N_HOUSEWORK_2" data-low="Tôi hoàn toàn" data-high="Người khác hoàn toàn"
+           data-qtext="B4.2. Chăm sóc con / người thân (cho ăn, đưa đón, chăm khi ốm)"></div>
+      <div class="q" data-required="N_HOUSEWORK_3" data-likert="N_HOUSEWORK_3" data-low="Tôi hoàn toàn" data-high="Người khác hoàn toàn"
+           data-qtext="B4.3. Mua sắm, quản lý chi tiêu gia đình"></div>
+    </div>
+
+    <div class="err-box" data-err></div>
+    <div class="nav">
+      <button type="button" class="btn btn-back" data-prev>← Quay lại</button>
+      <button type="button" class="btn btn-next" data-next>Tiếp tục →</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 2 ============ -->
+  <section class="step" data-step="2">
+
+    <!-- PHẦN C -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="13" rx="2" stroke="#0891b2" stroke-width="2"/><path d="M8 20h8M12 17v3" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/><path d="M7 13l3-3 2 2 4-4" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần C · Hoạt động kinh doanh số</h2>
+          <p class="sec-desc">Hãy chia sẻ về công việc số của Anh/chị nhé!</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="C1_group">
+        <label class="q-label">C1. Anh/chị đang sử dụng những nền tảng nào? <span class="hint">(có thể chọn nhiều)</span><span class="req">*</span></label>
+        <label class="opt"><input type="checkbox" name="C1_1" value="1"><span>Shopee / Lazada / TikTok Shop</span></label>
+        <label class="opt"><input type="checkbox" name="C1_2" value="1"><span>Facebook / Zalo / Instagram</span></label>
+        <label class="opt"><input type="checkbox" name="C1_3" value="1"><span>Grab / Be / Xanh SM (xe công nghệ)</span></label>
+        <label class="opt"><input type="checkbox" name="C1_4" value="1"><span>ShopeeFood / GrabFood / BaeMin</span></label>
+        <label class="opt"><input type="checkbox" name="C1_5" value="1"><span>Upwork / Fiverr / Freelancer.com</span></label>
+        <label class="opt"><input type="checkbox" name="C1_6" value="1"><span>TikTok / YouTube creator</span></label>
+        <label class="opt"><input type="checkbox" name="C1_7" value="1"><span>Livestream (Shopee Live, TikTok Live)</span></label>
+        <label class="opt"><input type="checkbox" name="C1_8" value="1" data-other="C1_other"><span>Khác</span></label>
+        <input type="text" class="inline-other" name="C1_other" placeholder="Ghi rõ…" style="display:none">
+      </div>
+
+      <div class="q" data-required="C2">
+        <label class="q-label">C2. Nền tảng MANG LẠI THU NHẬP NHIỀU NHẤT cho Anh/chị là:<span class="req">*</span></label>
+        <input type="text" name="C2" placeholder="VD: Shopee, TikTok Shop, Facebook…">
+      </div>
+
+      <div class="q" data-required="C3a_group">
+        <label class="q-label">C3. Anh/chị lấy nguồn vốn từ đâu để kinh doanh số? <span class="hint">(có thể chọn nhiều)</span><span class="req">*</span></label>
+        <label class="opt"><input type="checkbox" name="C3a_1" value="1"><span>Tiết kiệm cá nhân</span></label>
+        <label class="opt"><input type="checkbox" name="C3a_2" value="1"><span>Vay người thân</span></label>
+        <label class="opt"><input type="checkbox" name="C3a_3" value="1"><span>Vay ngân hàng / tổ chức tín dụng chính thức</span></label>
+        <label class="opt"><input type="checkbox" name="C3a_4" value="1"><span>Vay qua app / tín dụng phi chính thức</span></label>
+        <label class="opt"><input type="checkbox" name="C3a_5" value="1"><span>Vốn từ Hội Phụ nữ / đoàn thể / quỹ hỗ trợ</span></label>
+        <label class="opt"><input type="checkbox" name="C3a_6" value="1"><span>Không tiếp cận được nguồn nào</span></label>
+      </div>
+
+      <div class="q" data-required="C3b">
+        <label class="q-label">C3. Tỷ lệ thu nhập đến từ nền tảng chính khoảng:<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="C3b" value="1"><span>Dưới 30%</span></label>
+        <label class="opt"><input type="radio" name="C3b" value="2"><span>30–50%</span></label>
+        <label class="opt"><input type="radio" name="C3b" value="3"><span>50–70%</span></label>
+        <label class="opt"><input type="radio" name="C3b" value="4"><span>70–90%</span></label>
+        <label class="opt"><input type="radio" name="C3b" value="5"><span>Trên 90%</span></label>
+      </div>
+
+      <div class="q" data-required="C4">
+        <label class="q-label">C4. Thu nhập gộp trung bình mỗi tháng từ kinh doanh số:<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="C4" value="1"><span>Dưới 5 triệu</span></label>
+        <label class="opt"><input type="radio" name="C4" value="2"><span>5–10 triệu</span></label>
+        <label class="opt"><input type="radio" name="C4" value="3"><span>10–20 triệu</span></label>
+        <label class="opt"><input type="radio" name="C4" value="4"><span>20–40 triệu</span></label>
+        <label class="opt"><input type="radio" name="C4" value="5"><span>40–80 triệu</span></label>
+        <label class="opt"><input type="radio" name="C4" value="6"><span>Trên 80 triệu</span></label>
+      </div>
+
+      <div class="q" data-required="C5">
+        <label class="q-label">C5. Tình trạng đăng ký kinh doanh<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="C5" value="1"><span>Đã đăng ký DN / hộ KD</span></label>
+        <label class="opt"><input type="radio" name="C5" value="2"><span>Chưa đăng ký, đang có ý định</span></label>
+        <label class="opt"><input type="radio" name="C5" value="3"><span>Tôi là cá nhân tự do không thuộc diện phải đăng ký</span></label>
+        <label class="opt"><input type="radio" name="C5" value="4"><span>Chưa đăng ký, không có ý định</span></label>
+
+        <div id="C5_reasons" style="display:none;margin-top:12px;padding:14px;border-radius:14px;background:#eef5ff;border:1px dashed #cfe0fb">
+          <label class="q-label" style="font-size:14.5px">Lý do chưa đăng ký:</label>
+          <label class="opt"><input type="checkbox" name="C5_reason_1" value="1"><span>Chi phí / thủ tục phức tạp</span></label>
+          <label class="opt"><input type="checkbox" name="C5_reason_2" value="1"><span>Sợ phải nộp thuế</span></label>
+          <label class="opt"><input type="checkbox" name="C5_reason_3" value="1"><span>Không thấy lợi ích</span></label>
+          <label class="opt"><input type="checkbox" name="C5_reason_4" value="1"><span>Quy mô còn nhỏ</span></label>
+          <label class="opt"><input type="checkbox" name="C5_reason_5" value="1"><span>Không biết phải đăng ký</span></label>
+          <label class="opt"><input type="checkbox" name="C5_reason_6" value="1" data-other="C5_reason_other"><span>Khác</span></label>
+          <input type="text" class="inline-other" name="C5_reason_other" placeholder="Ghi rõ…" style="display:none">
+        </div>
+      </div>
+
+      <div class="q" data-required="C6">
+        <label class="q-label">C6. Tình trạng đóng BHXH<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="C6" value="1"><span>BHXH bắt buộc</span></label>
+        <label class="opt"><input type="radio" name="C6" value="2"><span>BHXH tự nguyện</span></label>
+        <label class="opt"><input type="radio" name="C6" value="3"><span>Không đóng, có dự định</span></label>
+        <label class="opt"><input type="radio" name="C6" value="4"><span>Không đóng, không dự định</span></label>
+      </div>
+
+      <div class="q" data-required="C7">
+        <label class="q-label">C7. Anh/chị xem kinh doanh / làm việc số là:<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="C7" value="1"><span>Nghề chính</span></label>
+        <label class="opt"><input type="radio" name="C7" value="2"><span>Nghề phụ / làm thêm</span></label>
+        <label class="opt"><input type="radio" name="C7" value="3"><span>Vừa có nghề chính khác vừa KD số</span></label>
+        <input type="text" class="inline-other" name="C7_other" placeholder="Ghi rõ nghề chính…" style="display:none">
+      </div>
+    </div>
+
+    <!-- PHẦN M -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5L12 3z" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần M · Động lực &amp; giá trị nhận được</h2>
+          <p class="sec-desc">Điều gì khiến Anh/chị gắn bó với công việc số?</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="M1_group" data-max3="M1">
+        <label class="q-label">M1. Điều gì quyết định việc Anh/chị tham gia mô hình kinh doanh / làm việc online? <span class="hint">(chọn tối đa 3)</span><span class="req">*</span></label>
+        <label class="opt"><input type="checkbox" name="M1_1" value="1"><span>Tìm nguồn thu nhập thứ hai ngoài lương</span></label>
+        <label class="opt"><input type="checkbox" name="M1_2" value="1"><span>Cần linh hoạt thời gian để chăm sóc gia đình</span></label>
+        <label class="opt"><input type="checkbox" name="M1_3" value="1"><span>Muốn học kiến thức – kỹ năng kinh doanh số</span></label>
+        <label class="opt"><input type="checkbox" name="M1_4" value="1"><span>Muốn được kết nối, thuộc về một cộng đồng</span></label>
+        <label class="opt"><input type="checkbox" name="M1_5" value="1"><span>Muốn tự chủ, không thích làm thuê</span></label>
+        <label class="opt"><input type="checkbox" name="M1_6" value="1"><span>Khẳng định bản thân, đánh thức năng lực bên trong</span></label>
+        <label class="opt"><input type="checkbox" name="M1_7" value="1"><span>Không tìm được việc làm chính thức</span></label>
+        <label class="opt"><input type="checkbox" name="M1_8" value="1"><span>Người quen / bạn bè rủ tham gia</span></label>
+        <label class="opt"><input type="checkbox" name="M1_9" value="1" data-other="M1_other"><span>Khác</span></label>
+        <input type="text" class="inline-other" name="M1_other" placeholder="Ghi rõ…" style="display:none">
+        <div class="max-warn" data-maxwarn="M1">Chỉ được chọn tối đa 3 phương án.</div>
+      </div>
+
+      <div class="q" data-required="M2" data-likert="M2" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="M2. Dù thu nhập ban đầu chưa đến, thậm chí phải bỏ thêm chi phí, tôi vẫn tiếp tục đầu tư vào công việc này."></div>
+      <div class="q" data-required="M3" data-likert="M3" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="M3. Công việc số cho tôi cơ hội học hỏi, kết nối cộng đồng và phát hiện giá trị bản thân mà công việc truyền thống không có."></div>
+      <div class="q" data-required="M4" data-likert="M4" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="M4. Điều giữ tôi gắn bó với công việc số là những giá trị ngoài tiền (cộng đồng, sự tự do, sự trưởng thành), chứ không chỉ thu nhập."></div>
+    </div>
+
+    <!-- PHẦN E -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke="#0891b2" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v3M12 15h.01" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần E · Điều kiện làm việc trên nền tảng</h2>
+          <p class="sec-desc">Trải nghiệm thực tế của Anh/chị với nền tảng (thang 1–5).</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="E1" data-likert="E1" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="E1. Nền tảng đặt giá / hoa hồng / cuốc thay vì để tôi tự quyết định."></div>
+
+      <div class="q" data-required="E2">
+        <label class="q-label">E2. Trong 12 tháng qua, tài khoản của tôi từng bị khóa / giảm hiển thị, hoặc bị nền tảng phạt / trừ tiền.<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="E2" value="0"><span>Không</span></label>
+        <label class="opt"><input type="radio" name="E2" value="1"><span>Có</span></label>
+      </div>
+
+      <div class="q" data-required="E3" data-likert="E3" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="E3. Khi tôi ốm, nghỉ làm hoặc gặp sự cố, tôi không có nguồn thu nhập thay thế."></div>
+      <div class="q" data-required="E4" data-likert="E4" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="E4. Nếu tôi chuyển sang nền tảng khác, tôi sẽ mất khách hàng / đánh giá / uy tín đã tích lũy."></div>
+      <div class="q" data-required="E5" data-likert="E5" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="E5. Tôi không hiểu rõ cách thuật toán nền tảng xếp hạng hoặc phân phối đơn hàng cho tôi."></div>
+      <div class="q" data-required="E6" data-likert="E6" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="E6. Nền tảng có thể thay đổi chính sách (phí, hoa hồng, quy tắc) bất kỳ lúc nào mà tôi không có khả năng đàm phán."></div>
+      <div class="q" data-required="E7" data-likert="E7" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="E7. Tôi từng bị quấy rối, lăng mạ hoặc cảm thấy không an toàn khi làm việc số."></div>
+    </div>
+
+    <div class="err-box" data-err></div>
+    <div class="nav">
+      <button type="button" class="btn btn-back" data-prev>← Quay lại</button>
+      <button type="button" class="btn btn-next" data-next>Tiếp tục →</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 3 ============ -->
+  <section class="step" data-step="3">
+
+    <!-- PHẦN F -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#2563eb" stroke-width="2"/><path d="M12 7v5l3.5 2" stroke="#0891b2" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần F · Sử dụng thời gian &amp; tự chủ</h2>
+          <p class="sec-desc">Một ngày của Anh/chị được phân bổ thế nào?</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="F1">
+        <label class="q-label">F1. Trung bình mỗi NGÀY, tổng giờ làm việc số (giờ/ngày)<span class="req">*</span></label>
+        <input type="number" name="F1" min="0" max="24" step="0.5" placeholder="VD: 6">
+      </div>
+      <div class="q" data-required="F2">
+        <label class="q-label">F2. Trung bình mỗi NGÀY, tổng giờ chăm sóc gia đình / việc nhà (giờ/ngày)<span class="req">*</span></label>
+        <input type="number" name="F2" min="0" max="24" step="0.5" placeholder="VD: 4">
+      </div>
+      <div class="q" data-required="F3">
+        <label class="q-label">F3. Trung bình mỗi NGÀY, tổng giờ nghỉ ngơi / giải trí / sở thích (giờ/ngày)<span class="req">*</span></label>
+        <input type="number" name="F3" min="0" max="24" step="0.5" placeholder="VD: 2">
+      </div>
+
+      <div class="q" data-required="F4" data-likert="F4" data-low="Hoàn toàn không" data-high="Hoàn toàn đúng"
+           data-qtext="F4. Tôi có thể chủ động chọn thời điểm bắt đầu và kết thúc công việc số mỗi ngày."></div>
+      <div class="q" data-required="F5" data-likert="F5" data-low="Hoàn toàn không" data-high="Hoàn toàn đúng"
+           data-qtext="F5. Công việc số lấn sang thời gian dành cho gia đình của tôi."></div>
+      <div class="q" data-required="F6" data-likert="F6" data-low="Hoàn toàn không" data-high="Hoàn toàn đúng"
+           data-qtext="F6. Tổng thể, tôi có sự cân bằng giữa công việc và đời sống cá nhân / gia đình."></div>
+    </div>
+
+    <!-- PHẦN G -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 4l2 4 4 .5-3 3 .8 4.2L12 14l-3.8 1.7L9 11.5 6 8.5l4-.5 2-4z" stroke="#0891b2" stroke-width="2" stroke-linejoin="round"/><path d="M5 20h14" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần G · Vị thế trong hộ gia đình</h2>
+          <p class="sec-desc">Tiếng nói và vai trò của Anh/chị trong gia đình (thang 1–5).</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="G1" data-likert="G1" data-low="Hoàn toàn không có tiếng nói" data-high="Tôi là người quyết định chính"
+           data-qtext="G1. Trong các quyết định chi tiêu lớn của gia đình, tiếng nói của tôi có trọng lượng."></div>
+      <div class="q" data-required="G2" data-likert="G2" data-low="Hoàn toàn không ủng hộ" data-high="Hoàn toàn ủng hộ"
+           data-qtext="G2. Bạn đời / người thân ủng hộ công việc số mà tôi đang làm."></div>
+      <div class="q" data-required="G3" data-likert="G3" data-low="Hoàn toàn không chia sẻ" data-high="Chia sẻ ngang bằng"
+           data-qtext="G3. Bạn đời / người thân chia sẻ việc nhà và chăm con để tôi có thời gian làm việc."></div>
+      <div class="q" data-required="G4" data-likert="G4" data-low="Hoàn toàn không" data-high="Tăng rất nhiều"
+           data-qtext="G4. Thu nhập từ công việc số đã làm tăng tiếng nói và vị thế của tôi trong gia đình."></div>
+      <div class="q" data-required="G5" data-likert="G5" data-low="Hoàn toàn không đồng ý" data-high="Hoàn toàn đồng ý"
+           data-qtext="G5. Việc kiếm tiền nuôi gia đình chủ yếu là trách nhiệm của nam giới."></div>
+    </div>
+
+    <div class="err-box" data-err></div>
+    <div class="nav">
+      <button type="button" class="btn btn-back" data-prev>← Quay lại</button>
+      <button type="button" class="btn btn-next" data-next>Tiếp tục →</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 4 ============ -->
+  <section class="step" data-step="4">
+
+    <!-- PHẦN H -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M5 7h14M7 7l-3 7h6l-3-7zM17 7l-3 7h6l-3-7z" stroke="#0891b2" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần H · Nhận thức pháp luật</h2>
+          <p class="sec-desc">Thang 1–5: 1 = Hoàn toàn không biết / không đồng ý, 5 = Biết rất rõ / rất đồng ý.</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="H1" data-likert="H1" data-low="Hoàn toàn không biết" data-high="Biết rất rõ"
+           data-qtext="H1. Tôi biết về nghĩa vụ đăng ký kinh doanh đối với hoạt động kinh doanh online hiện tại của mình."></div>
+      <div class="q" data-required="H2" data-likert="H2" data-low="Hoàn toàn không biết" data-high="Biết rất rõ"
+           data-qtext="H2. Tôi biết về nghĩa vụ kê khai và nộp thuế đối với thu nhập từ hoạt động kinh doanh online."></div>
+      <div class="q" data-required="H3" data-likert="H3" data-low="Hoàn toàn không đồng ý" data-high="Rất đồng ý"
+           data-qtext="H3. Tôi lo ngại bị cơ quan chức năng thanh tra, xử phạt hoặc nền tảng khoá tài khoản."></div>
+      <div class="q" data-required="H4" data-likert="H4" data-low="Hoàn toàn không biết" data-high="Biết rất rõ"
+           data-qtext="H4. Tôi biết các quy định về thương mại điện tử và thuế điều chỉnh các hoạt động kinh doanh online."></div>
+
+      <div class="q" data-required="H5">
+        <label class="q-label">H5. Trong 12 tháng qua, tôi từng xảy ra tranh chấp với nền tảng hoặc khách hàng.<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="H5" value="0"><span>Không</span></label>
+        <label class="opt"><input type="radio" name="H5" value="1"><span>Có – giải quyết thoả đáng</span></label>
+        <label class="opt"><input type="radio" name="H5" value="2"><span>Có – không thoả đáng</span></label>
+      </div>
+
+      <div class="q" data-required="H6" data-likert="H6" data-low="Hoàn toàn không biết" data-high="Biết rất rõ"
+           data-qtext="H6. Tôi biết về địa chỉ để nhờ tư vấn pháp lý nếu quyền lợi bị vi phạm."></div>
+    </div>
+
+    <!-- PHẦN I -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần I · An sinh xã hội</h2>
+          <p class="sec-desc">Về bảo hiểm, tiết kiệm và hỗ trợ khi gặp rủi ro.</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="I1_group">
+        <label class="q-label">I1. Anh/chị đang có loại bảo hiểm y tế nào? <span class="hint">(chọn nhiều)</span><span class="req">*</span></label>
+        <label class="opt"><input type="checkbox" name="I1_1" value="1"><span>BHYT bắt buộc (qua công ty / hộ nghèo / SV)</span></label>
+        <label class="opt"><input type="checkbox" name="I1_2" value="1"><span>BHYT tự nguyện hộ gia đình</span></label>
+        <label class="opt"><input type="checkbox" name="I1_3" value="1"><span>Bảo hiểm y tế tư nhân</span></label>
+        <label class="opt"><input type="checkbox" name="I1_4" value="1"><span>Không có bất kỳ loại nào</span></label>
+      </div>
+
+      <div class="q" data-required="I2">
+        <label class="q-label">I2. Có khoản tiết kiệm phòng rủi ro (~3 tháng)?<span class="req">*</span></label>
+        <label class="opt"><input type="radio" name="I2" value="1"><span>Có</span></label>
+        <label class="opt"><input type="radio" name="I2" value="2"><span>Có một phần</span></label>
+        <label class="opt"><input type="radio" name="I2" value="3"><span>Không</span></label>
+      </div>
+
+      <div class="q" data-required="I3_group">
+        <label class="q-label">I3. Khi ốm đau / thai sản / rủi ro, ai hỗ trợ tài chính? <span class="hint">(chọn nhiều)</span><span class="req">*</span></label>
+        <label class="opt"><input type="checkbox" name="I3_1" value="1"><span>Bạn đời</span></label>
+        <label class="opt"><input type="checkbox" name="I3_2" value="1"><span>Cha mẹ / người thân</span></label>
+        <label class="opt"><input type="checkbox" name="I3_3" value="1"><span>Tiết kiệm cá nhân</span></label>
+        <label class="opt"><input type="checkbox" name="I3_4" value="1"><span>BHXH (ốm đau / thai sản)</span></label>
+        <label class="opt"><input type="checkbox" name="I3_5" value="1"><span>Vay mượn</span></label>
+        <label class="opt"><input type="checkbox" name="I3_6" value="1"><span>Không có nguồn nào rõ ràng</span></label>
+      </div>
+
+      <div class="q" data-required="I4" data-likert="I4" data-low="Hoàn toàn không lo" data-high="Rất lo lắng"
+           data-qtext="I4. Anh/chị có lo lắng về tuổi già / không có lương hưu không?"></div>
+
+      <div class="q" data-required="I5_group" data-max3="I5">
+        <label class="q-label">I5. Hỗ trợ nào sẽ giúp ích nhất? <span class="hint">(chọn tối đa 3)</span><span class="req">*</span></label>
+        <label class="opt"><input type="checkbox" name="I5_1" value="1"><span>Giảm thủ tục ĐKKD</span></label>
+        <label class="opt"><input type="checkbox" name="I5_2" value="1"><span>BHXH tự nguyện linh hoạt</span></label>
+        <label class="opt"><input type="checkbox" name="I5_3" value="1"><span>Tín dụng vi mô / vay ưu đãi</span></label>
+        <label class="opt"><input type="checkbox" name="I5_4" value="1"><span>Đào tạo kỹ năng số &amp; quản lý</span></label>
+        <label class="opt"><input type="checkbox" name="I5_5" value="1"><span>Quy định ràng buộc trách nhiệm NTT</span></label>
+        <label class="opt"><input type="checkbox" name="I5_6" value="1"><span>Kênh giải quyết tranh chấp / tư vấn pháp lý miễn phí</span></label>
+        <label class="opt"><input type="checkbox" name="I5_7" value="1"><span>Hỗ trợ chăm sóc con / thai sản</span></label>
+        <label class="opt"><input type="checkbox" name="I5_8" value="1" data-other="I5_other"><span>Khác</span></label>
+        <input type="text" class="inline-other" name="I5_other" placeholder="Ghi rõ…" style="display:none">
+        <div class="max-warn" data-maxwarn="I5">Chỉ được chọn tối đa 3 phương án.</div>
+      </div>
+    </div>
+
+    <!-- PHẦN J -->
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#2563eb" stroke-width="2"/><path d="M8.5 14c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2" stroke="#0891b2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="10" r="1.1" fill="#0891b2"/><circle cx="15" cy="10" r="1.1" fill="#0891b2"/></svg>
+        </div>
+        <div>
+          <h2 class="sec-title">Phần J · Hài lòng &amp; dự định</h2>
+          <p class="sec-desc">Những câu hỏi cuối cùng rồi Anh/chị nhé! (thang 1–5)</p>
+        </div>
+      </div>
+
+      <div class="q" data-required="J1" data-likert="J1" data-low="Hoàn toàn không hài lòng" data-high="Hoàn toàn hài lòng"
+           data-qtext="J1. Tổng thể, tôi hài lòng và an tâm về tương lai nghề nghiệp với công việc số hiện tại."></div>
+      <div class="q" data-required="J2" data-likert="J2" data-low="Chắc chắn không" data-high="Chắc chắn có"
+           data-qtext="J2. Tôi dự định tiếp tục làm công việc này trong 2 năm tới."></div>
+      <div class="q" data-required="J3" data-likert="J3" data-low="Chắc chắn không" data-high="Chắc chắn có"
+           data-qtext="J3. Tôi dự định mở rộng quy mô và đăng ký kinh doanh chính thức trong 12 tháng tới."></div>
+    </div>
+
+    <div class="err-box" data-err></div>
+    <div class="nav">
+      <button type="button" class="btn btn-back" data-prev>← Quay lại</button>
+      <button type="button" class="btn btn-submit" id="submitBtn">Gửi khảo sát →</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 5 — THANK YOU ============ -->
+  <section class="step" data-step="5">
+    <div class="card hero">
+      <div class="hero-badge">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="#d6ecff"/>
+          <path d="M22 33l7 7 14-15" stroke="#2563eb" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>Khảo sát kết thúc.<br/>Trân trọng cảm ơn Anh/chị đã tham gia! 🎉</h1>
+      <p>Những chia sẻ quý báu của Anh/chị sẽ góp phần tạo nên những chính sách và hỗ trợ tốt hơn cho người kinh doanh số tại Việt Nam.</p>
+      <p style="margin-top:18px;font-weight:600;color:var(--blue)">Chúc Anh/chị nhiều sức khỏe và thành công! 🚀</p>
+    </div>
+    <footer>Mã phản hồi của Anh/chị đã được ghi nhận an toàn.</footer>
+  </section>
+
+  </form>
+</div>
+
+<canvas id="confetti" style="position:fixed;inset:0;pointer-events:none;z-index:9999;display:none"></canvas>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "khaosat_phunu_kdso_v1";
+
+  /* ---------- Likert builder ---------- */
+  document.querySelectorAll("[data-likert]").forEach(function(q){
+    var name = q.getAttribute("data-likert");
+    var low  = q.getAttribute("data-low") || "";
+    var high = q.getAttribute("data-high") || "";
+    var qtext= q.getAttribute("data-qtext");
+    var labelsByVal = {1:low,2:"",3:"",4:"",5:high};
+
+    var html = "";
+    if(qtext){ html += '<label class="q-label">'+qtext+'<span class="req">*</span></label>'; }
+    html += '<div class="likert">';
+    html += '<div class="likert-anchors"><span><b>1</b> · '+low+'</span><span>'+high+' · <b>5</b></span></div>';
+    html += '<div class="likert-scale">';
+    for(var v=1;v<=5;v++){
+      var dt = (v===1?low:(v===5?high:""));
+      html += '<label data-text="'+dt+'"><input type="radio" name="'+name+'" value="'+v+'">'+v+'</label>';
+    }
+    html += '</div></div>';
+    q.innerHTML = html;
+  });
+
+  /* ---------- State ---------- */
+  var form = document.getElementById("surveyForm");
+  var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
+  var LAST_INPUT_STEP = 4;     // step 4 holds submit
+  var THANKS_STEP = 5;
+  var current = 0;
+  var stepNames = {
+    0:"Phần giới thiệu",1:"Sàng lọc · Cá nhân · Hộ gia đình",
+    2:"Hoạt động số · Động lực · Điều kiện làm việc",
+    3:"Thời gian · Vị thế gia đình",
+    4:"Pháp luật · An sinh · Dự định",5:"Hoàn thành"
+  };
+  // progress: count from step 1..4 as the "filling" range
+  function pctFor(s){
+    if(s<=0) return 0;
+    if(s>=THANKS_STEP) return 100;
+    return Math.round((s/LAST_INPUT_STEP)*100);
+  }
+
+  function showStep(s){
+    steps.forEach(function(el){ el.classList.toggle("active", +el.dataset.step===s); });
+    current = s;
+    var pw = document.getElementById("progressWrap");
+    pw.style.display = (s>0 && s<THANKS_STEP) ? "block" : (s===THANKS_STEP?"block":"none");
+    document.getElementById("progressLabel").textContent = stepNames[s]||"";
+    document.getElementById("progressPct").textContent = pctFor(s)+"%";
+    document.getElementById("barFill").style.width = pctFor(s)+"%";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  /* ---------- response_id + start time ---------- */
+  function uuid(){
+    if(crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
+      var r=Math.random()*16|0, v=c==='x'?r:(r&0x3|0x8); return v.toString(16);
+    });
+  }
+  var meta = { response_id:"", start_time:"", end_time:"" };
+
+  /* ---------- localStorage ---------- */
+  function collect(){
+    var data = {};
+    var fd = new FormData(form);
+    // checkboxes: ensure 0/1 binary for all named checkboxes
+    form.querySelectorAll('input[type=checkbox]').forEach(function(cb){
+      data[cb.name] = cb.checked ? 1 : 0;
+    });
+    form.querySelectorAll('input[type=radio]:checked').forEach(function(r){ data[r.name]=r.value; });
+    form.querySelectorAll('input[type=text],input[type=number]').forEach(function(t){
+      if(t.name) data[t.name]= t.value.trim();
+    });
+    data.response_id = meta.response_id;
+    data.start_time  = meta.start_time;
+    data.end_time    = meta.end_time;
+    return data;
+  }
+
+  function save(){
+    try{
+      var snap = { meta:meta, current:current, values:{} };
+      form.querySelectorAll('input').forEach(function(i){
+        if(!i.name) return;
+        if(i.type==='checkbox'){ snap.values[i.name+'__chk'] = i.checked; }
+        else if(i.type==='radio'){ if(i.checked) snap.values[i.name]=i.value; }
+        else { snap.values[i.name]=i.value; }
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snap));
+    }catch(e){}
+  }
+
+  function restore(){
+    var raw;
+    try{ raw = localStorage.getItem(STORAGE_KEY); }catch(e){ return false; }
+    if(!raw) return false;
+    try{
+      var snap = JSON.parse(raw);
+      meta = snap.meta || meta;
+      var v = snap.values||{};
+      Object.keys(v).forEach(function(k){
+        if(k.slice(-5)==='__chk'){
+          var nm=k.slice(0,-5);
+          var cb=form.querySelector('input[type=checkbox][name="'+nm+'"]');
+          if(cb) cb.checked = !!v[k];
+        } else {
+          var radios=form.querySelectorAll('input[type=radio][name="'+k+'"]');
+          if(radios.length){
+            radios.forEach(function(r){ if(r.value===v[k]) r.checked=true; });
+          } else {
+            var inp=form.querySelector('input[name="'+k+'"]');
+            if(inp) inp.value=v[k];
+          }
+        }
+      });
+      refreshConditionals();
+      return snap;
+    }catch(e){ return false; }
+  }
+
+  /* ---------- Conditional logic ---------- */
+  function refreshConditionals(){
+    // S2_8 -> S2_other ; C1_8 -> C1_other ; M1_9 -> M1_other ; I5_8 -> I5_other ; C5_reason_6 -> other
+    [['S2_8','S2_other'],['C1_8','C1_other'],['M1_9','M1_other'],['I5_8','I5_other'],['C5_reason_6','C5_reason_other']].forEach(function(p){
+      var cb=form.querySelector('input[name="'+p[0]+'"]');
+      var tx=form.querySelector('input[name="'+p[1]+'"]');
+      if(cb&&tx) tx.style.display = cb.checked ? "block":"none";
+    });
+    // C5=2 -> reasons
+    var c5 = form.querySelector('input[name="C5"]:checked');
+    document.getElementById("C5_reasons").style.display = (c5 && c5.value==="2") ? "block":"none";
+    // C7=3 -> other
+    var c7 = form.querySelector('input[name="C7"]:checked');
+    form.querySelector('input[name="C7_other"]').style.display = (c7 && c7.value==="3") ? "block":"none";
+    // B2_none -> disable child counts
+    var none = document.getElementById("B2_none");
+    ['B2_under6','B2_6to11','B2_12to17','B2_18plus'].forEach(function(n){
+      var f=form.querySelector('input[name="'+n+'"]');
+      if(f){ f.disabled = none.checked; if(none.checked) f.value=""; f.style.opacity = none.checked?.45:1; }
+    });
+    // S1 stop logic
+    var s1 = form.querySelector('input[name="S1"]:checked');
+    var stop = document.getElementById("stopMsg");
+    if(s1 && s1.value==="0"){ stop.classList.add("show"); }
+    else { stop.classList.remove("show"); }
+  }
+
+  /* ---------- max-3 checkbox groups ---------- */
+  function enforceMax3(group){
+    var q = document.querySelector('[data-max3="'+group+'"]');
+    if(!q) return;
+    var boxes = q.querySelectorAll('input[type=checkbox]');
+    var checked = q.querySelectorAll('input[type=checkbox]:checked').length;
+    var warn = q.querySelector('[data-maxwarn="'+group+'"]');
+    if(checked>=3){
+      boxes.forEach(function(b){ if(!b.checked) b.disabled=true; });
+    } else {
+      boxes.forEach(function(b){ b.disabled=false; });
+    }
+    if(warn) warn.classList.toggle("show", checked>=3);
+  }
+
+  /* ---------- Validation ---------- */
+  function isFilled(q){
+    var reqName = q.getAttribute("data-required");
+    if(!reqName) return true;
+    // group checkbox (any one checked)
+    if(reqName.slice(-6)==="_group"){
+      return q.querySelectorAll('input[type=checkbox]:checked').length>0;
+    }
+    // radio / likert
+    var radios = q.querySelectorAll('input[type=radio]');
+    if(radios.length){ return q.querySelector('input[type=radio]:checked')!==null; }
+    // single input
+    var inp = q.querySelector('input[type=text],input[type=number]');
+    if(inp){ return inp.value.trim()!==""; }
+    return true;
+  }
+
+  function validateStep(s){
+    var section = steps[s];
+    var firstBad=null;
+    var allQ = section.querySelectorAll('.q[data-required]');
+    allQ.forEach(function(q){
+      var ok = isFilled(q);
+      q.classList.toggle("invalid", !ok);
+      if(!ok && !firstBad) firstBad=q;
+    });
+    var errBox = section.querySelector('[data-err]');
+    if(firstBad){
+      if(errBox){ errBox.textContent="Anh/chị vui lòng trả lời đầy đủ các câu có dấu (*) trước khi tiếp tục nhé."; errBox.classList.add("show"); }
+      firstBad.scrollIntoView({behavior:"smooth",block:"center"});
+      return false;
+    }
+    if(errBox) errBox.classList.remove("show");
+    return true;
+  }
+
+  /* ---------- Navigation ---------- */
+  document.getElementById("startBtn").addEventListener("click", function(){
+    if(!meta.response_id) meta.response_id = uuid();
+    meta.start_time = new Date().toISOString();
+    save();
+    showStep(1);
+  });
+
+  form.querySelectorAll('[data-next]').forEach(function(btn){
+    btn.addEventListener("click", function(){
+      // S1 block: if Step1 and S1 = Không -> stop
+      if(current===1){
+        var s1 = form.querySelector('input[name="S1"]:checked');
+        if(s1 && s1.value==="0"){
+          document.getElementById("stopMsg").classList.add("show");
+          document.getElementById("stopMsg").scrollIntoView({behavior:"smooth",block:"center"});
+          return;
+        }
+      }
+      if(!validateStep(current)) return;
+      save();
+      if(current<LAST_INPUT_STEP) showStep(current+1);
+    });
+  });
+
+  form.querySelectorAll('[data-prev]').forEach(function(btn){
+    btn.addEventListener("click", function(){
+      if(current>1){ showStep(current-1); }
+      else { showStep(0); }
+    });
+  });
+
+  /* ---------- Submit ---------- */
+  document.getElementById("submitBtn").addEventListener("click", function(){
+    if(!validateStep(LAST_INPUT_STEP)) return;
+    meta.end_time = new Date().toISOString();
+    var data = collect();
+    save();
+    submitToGoogleSheets(data);
+    showStep(THANKS_STEP);
+    launchConfetti();
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  });
+
+  /* ---------- Google Sheets hook (stub) ---------- */
+  function submitToGoogleSheets(data){
+    // 👉 Dán URL Web App của Google Apps Script vào đây (kết thúc bằng /exec):
+    var ENDPOINT = "https://script.google.com/macros/s/AKfycbxt-raIRKIhim4qJnGWd_fnYRrKexgXVr8VTiDHYpETUsVOz3QD1QNnzKdeRkfe3FBJEw/exec"; // ví dụ: "https://script.google.com/macros/s/XXXX/exec"
+    console.log("SURVEY DATA →", data);
+    if(!ENDPOINT){ return; } // chưa cấu hình endpoint thì chỉ log ra console
+    fetch(ENDPOINT,{
+      method:"POST",
+      mode:"no-cors",                                  // tránh lỗi CORS
+      headers:{"Content-Type":"text/plain;charset=utf-8"}, // không gây preflight
+      body:JSON.stringify(data)
+    }).catch(function(err){ console.error("Gửi thất bại:", err); });
+  }
+
+  /* ---------- Live listeners ---------- */
+  form.addEventListener("change", function(e){
+    refreshConditionals();
+    enforceMax3("M1"); enforceMax3("I5");
+    // clear invalid state on the affected question
+    var q = e.target.closest('.q');
+    if(q && q.classList.contains('invalid') && isFilled(q)) q.classList.remove('invalid');
+    save();
+  });
+  form.addEventListener("input", function(e){
+    if(e.target.type==='text'||e.target.type==='number'){
+      var q=e.target.closest('.q');
+      if(q && q.classList.contains('invalid') && isFilled(q)) q.classList.remove('invalid');
+      save();
+    }
+  });
+
+  /* ---------- Confetti ---------- */
+  function launchConfetti(){
+    var c=document.getElementById("confetti"); c.style.display="block";
+    var ctx=c.getContext("2d");
+    function size(){ c.width=innerWidth; c.height=innerHeight; }
+    size(); window.addEventListener("resize",size);
+    var colors=["#3b82f6","#22d3ee","#38bdf8","#2563eb","#0891b2","#7dd3fc"];
+    var bits=[];
+    for(var i=0;i<140;i++){
+      bits.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,
+        r:5+Math.random()*7,c:colors[i%colors.length],
+        vy:2+Math.random()*3,vx:-1.5+Math.random()*3,
+        a:Math.random()*Math.PI,va:-.1+Math.random()*.2});
+    }
+    var t0=Date.now();
+    (function frame(){
+      ctx.clearRect(0,0,c.width,c.height);
+      bits.forEach(function(b){
+        b.y+=b.vy; b.x+=b.vx; b.a+=b.va;
+        if(b.y>c.height+20){ b.y=-20; b.x=Math.random()*c.width; }
+        ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.a);
+        ctx.fillStyle=b.c; ctx.fillRect(-b.r/2,-b.r/2,b.r,b.r*.6); ctx.restore();
+      });
+      if(Date.now()-t0<6000){ requestAnimationFrame(frame); }
+      else { ctx.clearRect(0,0,c.width,c.height); c.style.display="none"; }
+    })();
+  }
+
+  /* ---------- Init ---------- */
+  var snap = restore();
+  refreshConditionals(); enforceMax3("M1"); enforceMax3("I5");
+  // Always start at welcome screen on load (data preserved if user clicks Bắt đầu)
+  showStep(0);
+})();
+</script>
+</body>
+</html>
